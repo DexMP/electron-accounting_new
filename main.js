@@ -1,7 +1,7 @@
 'use strict'
 
 const path = require('path')
-const { app, ipcMain } = require('electron')
+const { app, ipcMain, ipcRenderer } = require('electron')
 
 const Window = require('./Window')
 const DataStore = require('./DataStore')
@@ -80,10 +80,16 @@ function main() {
     })
 
     // auth-todo from todo list window
-    ipcMain.on('auth', (event, username, password) => {
-        console.log(username, password);
-        connection.query('SELECT COUNT(1) AS total FROM users WHERE username = ' + username + ' AND password = ' + password, function(err, results, fields) {
-            console.log(results);
+    ipcMain.on('username', (event, username) => {
+        ipcMain.on('password', (event, password) => {
+            console.log(username, password);
+            connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
+                if (results[0].total === 1) {
+                    mainWindow.loadFile('renderer', 'index.html')
+                } else {
+                    alert
+                }
+            })
         })
     })
 }

@@ -6,9 +6,10 @@ const { ipcRenderer } = require('electron')
 document.getElementById('login-form').addEventListener('submit', (evt) => {
     evt.preventDefault()
 
-    const username = evt.currentTarget.username.value
-    const password = evt.currentTarget.password.value
-    ipcRenderer.send('auth', (username, password))
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+    ipcRenderer.send('username', username)
+    ipcRenderer.send('password', password)
     username.value = ''
     password.value = ''
 })
