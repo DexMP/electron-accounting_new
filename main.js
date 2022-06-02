@@ -1,7 +1,7 @@
 'use strict'
 
 const path = require('path')
-const { app, ipcMain, ipcRenderer } = require('electron')
+const { app, ipcMain, ipcRenderer, remote } = require('electron')
 
 const Window = require('./Window')
 const DataStore = require('./DataStore')
@@ -32,7 +32,19 @@ const todosData = new DataStore({ name: 'Todos Main' })
 function main() {
     // todo list window
     let mainWindow = new Window({
-        file: path.join('renderer', 'welcome.html')
+        file: path.join('renderer', 'index.html')
+    })
+    mainWindow.hide()
+
+    let authWindow = new Window({
+        file: path.join('renderer', 'welcome.html'),
+        width: 500,
+        height: 500,
+        // close with the main window
+        modal: true,
+        show: false,
+        frame: false,
+        parent: mainWindow
     })
 
     // add todo window
@@ -82,15 +94,18 @@ function main() {
     // auth-todo from todo list window
     ipcMain.on('username', (event, username) => {
         ipcMain.on('password', (event, password) => {
-            console.log(username, password);
             connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
                 if (results[0].total === 1) {
-                    mainWindow.loadFile('renderer', 'index.html')
-                } else {
-                    alert
-                }
+                    console.log(username + ' Sing In');
+                    authWindow.close()
+                    mainWindow.show()
+                } else {}
             })
         })
+    })
+
+    ipcMain.on('close', () => {
+        app.quit()
     })
 }
 

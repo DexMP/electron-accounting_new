@@ -13,3 +13,9 @@ document.getElementById('login-form').addEventListener('submit', (evt) => {
     username.value = ''
     password.value = ''
 })
+
+document.getElementById('close').addEventListener('click', (evt) => {
+    evt.preventDefault()
+
+    ipcRenderer.send('close')
+})
