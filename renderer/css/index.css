@@ -60,6 +60,26 @@ body {
     border-color: #493224;
 }
 
+.border li:nth-child(6) {
+    border-color: #909090;
+}
+
+.border li:nth-child(7) {
+    border-color: #6c92af;
+}
+
+.border li:nth-child(8) {
+    border-color: #442d25;
+}
+
+.border li:nth-child(9) {
+    border-color: #ff8243;
+}
+
+.border li:nth-child(10) {
+    border-color: #8673a1;
+}
+
 .border li:hover {
     border-left: 10px solid transparent;
 }

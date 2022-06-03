@@ -1,14 +1,14 @@
 'use strict'
 
 const path = require('path')
-const { app, ipcMain, ipcRenderer, remote } = require('electron')
+const { app, ipcMain, session } = require('electron')
 const mysql = require('mysql')
 
 const Window = require('./Window')
 const DataStore = require('./DataStore')
 const query = require('esquery')
-
 let name
+
 
 const connection = mysql.createConnection({
     host: 'sql11.freemysqlhosting.net',
@@ -46,7 +46,8 @@ function main() {
     let mainWindow = new Window({
         file: path.join('renderer', 'index.html')
     })
-    mainWindow.hide()
+    mainWindow.maximize()
+    mainWindow.show()
 
     let authWindow = new Window({
         file: path.join('renderer', 'welcome.html'),
@@ -92,8 +93,7 @@ function main() {
     ipcMain.on('cash', (event, cash) => {
         var transaction = getRanHex(16)
         const date = new Date().toJSON().slice(0, 10)
-        console.log(date)
-        connection.query(`INSERT INTO cash_data( TRANSACTION, username, cash, DATE ) VALUES( "${transaction}", "${name}", ${cash}, ${date} )`, function(err, results, fields) {
+        connection.query(`INSERT INTO cash_data( TRANSACTION, username, cash, DATE ) VALUES( "${transaction}", "${name}", ${cash}, "${date}" )`, function(err, results, fields) {
             if (err) {
                 console.log(err);
             } else {
@@ -110,7 +110,10 @@ function main() {
         mainWindow.send('todos', updatedTodos)
     })
 
-    // auth-todo from todo list window
+    ipcMain.on('close', () => {
+            app.quit()
+        })
+        // auth-todo from todo list window
     return ipcMain.on('username', (event, username) => {
         ipcMain.on('password', (event, password) => {
             connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
@@ -121,7 +124,7 @@ function main() {
                                 console.log(err);
                             } else {
                                 for (let index = 0; index in results; index++) {
-                                    const updatedTodos = todosData.addTodo(results[index].cash).todos
+                                    const updatedTodos = todosData.getTodos(results[index].cash).todos
                                     mainWindow.send('todos', updatedTodos)
                                 }
                             }
@@ -132,19 +135,15 @@ function main() {
                         mainWindow.show()
                     }
                 } else {
-
+                    console.log('hi');
                 }
             })
         })
     })
-
-
-    ipcMain.on('close', () => {
-        app.quit()
-    })
 }
 
 app.on('ready', main)
+
 
 app.on('window-all-closed', function() {
     app.quit()

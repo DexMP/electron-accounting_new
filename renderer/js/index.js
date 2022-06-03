@@ -36,7 +36,7 @@ ipcRenderer.on('todos', (event, todos) => {
 
     // add click handlers to delete the clicked todo
     todoList.querySelectorAll('.todo-item').forEach(item => {
-        item.addEventListener('click', deleteTodo)
+        //item.addEventListener('click', deleteTodo)
     })
 })
 
