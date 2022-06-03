@@ -2,11 +2,12 @@
 
 const path = require('path')
 const { app, ipcMain, ipcRenderer, remote } = require('electron')
+const mysql = require('mysql')
 
 const Window = require('./Window')
 const DataStore = require('./DataStore')
 
-const mysql = require('mysql')
+const query_add = 'INSERT INTO `cash_data`(`transaction`, `username`, `sum`, `date`) VALUES ("'
 
 const connection = mysql.createConnection({
     host: 'sql11.freemysqlhosting.net',
@@ -81,6 +82,10 @@ function main() {
     ipcMain.on('add-todo', (event, todo) => {
         const updatedTodos = todosData.addTodo(todo).todos
 
+        connection.query(query_add + transaction + '", "' + username + '", ' + sum + ', ' + date + ')', function(err, results, fields) {
+            console.log(username + results);
+        })
+
         mainWindow.send('todos', updatedTodos)
     })
 
@@ -96,12 +101,15 @@ function main() {
         ipcMain.on('password', (event, password) => {
             connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
                 if (results[0].total === 1) {
+
                     console.log(username + ' Sing In');
+                    mainWindow.send('username', username)
                     authWindow.close()
                     mainWindow.show()
                 } else {}
             })
         })
+        event.returnValue = username
     })
 
     ipcMain.on('close', () => {
