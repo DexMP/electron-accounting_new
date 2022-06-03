@@ -6,6 +6,7 @@ const mysql = require('mysql')
 
 const Window = require('./Window')
 const DataStore = require('./DataStore')
+const query = require('esquery')
 
 let name
 
@@ -114,15 +115,25 @@ function main() {
         ipcMain.on('password', (event, password) => {
             connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
                 if (results[0].total === 1) {
-                    if (username === 'root') {
-
-                    } else {
+                    if (username === 'root') {} else {
+                        connection.query(`SELECT * FROM cash_data`, function(err, results, fields) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                for (let index = 0; index in results; index++) {
+                                    const updatedTodos = todosData.addTodo(results[index].cash).todos
+                                    mainWindow.send('todos', updatedTodos)
+                                }
+                            }
+                        })
                         name = username
                         mainWindow.send('username', username)
                         authWindow.close()
                         mainWindow.show()
                     }
-                } else {}
+                } else {
+
+                }
             })
         })
     })
