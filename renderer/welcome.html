@@ -5,36 +5,36 @@
     <meta charset="UTF-8">
     <title>Авторизация</title>
     <link rel="stylesheet" href="./css/welcome.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 
 <body>
     <div class="container">
         <form id="login-form">
             <div class="row">
-                <div class="col-sm">
-                    <input class="form-input" type="text" name="username" id="username" placeholder="username">
+                <div class="text-field">
+                    <label class="text-field__label" for="login">Логин</label>
+                    <input class="text-field__input" type="text" name="username" id="username" placeholder="username">
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-field">
+                    <label class="text-field__label" for="password">Пароль</label>
+                    <input class="text-field__input" type="password" name="password" id="password" placeholder="password">
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm">
-                    <input class="form-input" type="password" name="password" id="password" placeholder="password">
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm">
-                    <button class="btn">Вход</button>
+                    <button class="btn" role="button">Вход</button>
                 </div>
             </div>
         </form>
         <div class="row">
             <div class="col-sm">
-                <button class="btn" id="close">Выход</button>
+                <button class="btn" id="close" role="button">Выход</button>
             </div>
         </div>
     </div>
     <script src="js/welcome.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </body>
 
 </html>
