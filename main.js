@@ -7,6 +7,7 @@ const mysql = require('mysql')
 const Window = require('./Window')
 const DataStore = require('./DataStore')
 
+let name
 
 const connection = mysql.createConnection({
     host: 'sql11.freemysqlhosting.net',
@@ -87,20 +88,17 @@ function main() {
         }
     })
 
-    // add-todo from add todo window
-    ipcMain.on('add-todo', (event, todo) => {
-        ipcMain.on('username', (event, username) => {
-            const updatedTodos = todosData.addTodo(todo).todos
-            var transaction = getRanHex(16)
-            var date = new Date();
-            connection.query(`INSERT INTO cash_data( TRANSACTION, username, cash, DATE ) VALUES( "${transaction}", "${username}", ${todo}, ${date} )`, function(err, results, fields) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log(results);
-                }
-            })
-            mainWindow.send('todos', updatedTodos)
+    ipcMain.on('cash', (event, cash) => {
+        var transaction = getRanHex(16)
+        const date = new Date().toJSON().slice(0, 10)
+        console.log(date)
+        connection.query(`INSERT INTO cash_data( TRANSACTION, username, cash, DATE ) VALUES( "${transaction}", "${name}", ${cash}, ${date} )`, function(err, results, fields) {
+            if (err) {
+                console.log(err);
+            } else {
+                const updatedTodos = todosData.addTodo(cash).todos
+                mainWindow.send('todos', updatedTodos)
+            }
         })
     })
 
@@ -112,13 +110,14 @@ function main() {
     })
 
     // auth-todo from todo list window
-    ipcMain.on('username', (event, username) => {
+    return ipcMain.on('username', (event, username) => {
         ipcMain.on('password', (event, password) => {
             connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
                 if (results[0].total === 1) {
                     if (username === 'root') {
 
                     } else {
+                        name = username
                         mainWindow.send('username', username)
                         authWindow.close()
                         mainWindow.show()
@@ -126,8 +125,8 @@ function main() {
                 } else {}
             })
         })
-        event.returnValue = username
     })
+
 
     ipcMain.on('close', () => {
         app.quit()
