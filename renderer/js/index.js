@@ -4,10 +4,11 @@ const { ipcRenderer } = require('electron')
 let now = new Date();
 
 ipcRenderer.on('username', (e, username) => {
-    alert('Привет ' + username + ", приятной работы!");
-});
-
-// delete todo by its text value ( used below in event listener)
+        const p_user = document.getElementById('user')
+        p_user.innerHTML = `<p>Пользователь: ${username}</p>`;
+        alert('Привет ' + username + ", приятной работы!");
+    })
+    // delete todo by its text value ( used below in event listener)
 const deleteTodo = (e) => {
     ipcRenderer.send('delete-todo', e.target.textContent)
 }
@@ -17,6 +18,7 @@ document.getElementById('createTodoBtn').addEventListener('click', () => {
     ipcRenderer.send('add-todo-window')
 })
 
+//Buttons
 // on receive todos
 ipcRenderer.on('todos', (event, todos) => {
     // get the todoList ul
@@ -36,4 +38,16 @@ ipcRenderer.on('todos', (event, todos) => {
     todoList.querySelectorAll('.todo-item').forEach(item => {
         item.addEventListener('click', deleteTodo)
     })
+})
+
+document.getElementById('exit').addEventListener('click', (evt) => {
+    evt.preventDefault()
+
+    ipcRenderer.send('close')
+})
+
+document.getElementById('sing_out').addEventListener('click', (evt) => {
+    evt.preventDefault()
+
+    ipcRenderer.send('close')
 })

@@ -7,7 +7,6 @@ const mysql = require('mysql')
 const Window = require('./Window')
 const DataStore = require('./DataStore')
 
-const query_add = 'INSERT INTO `cash_data`(`transaction`, `username`, `sum`, `date`) VALUES ("'
 
 const connection = mysql.createConnection({
     host: 'sql11.freemysqlhosting.net',
@@ -94,7 +93,7 @@ function main() {
             const updatedTodos = todosData.addTodo(todo).todos
             var transaction = getRanHex(16)
             var date = new Date();
-            connection.query(query_add + transaction + '", "' + username + '", ' + Number(todo) + ', ' + date + ')', function(err, results, fields) {
+            connection.query(`INSERT INTO cash_data( TRANSACTION, username, cash, DATE ) VALUES( "${transaction}", "${username}", ${todo}, ${date} )`, function(err, results, fields) {
                 if (err) {
                     console.log(err);
                 } else {
