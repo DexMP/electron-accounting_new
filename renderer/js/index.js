@@ -40,13 +40,13 @@ ipcRenderer.on('todos', (event, todos) => {
     })
 })
 
-document.getElementById('exit').addEventListener('click', (evt) => {
+document.getElementById('sing_out').addEventListener('click', (evt) => {
     evt.preventDefault()
 
-    ipcRenderer.send('close')
+    ipcRenderer.send('sing_out')
 })
 
-document.getElementById('sing_out').addEventListener('click', (evt) => {
+document.getElementById('exit').addEventListener('click', (evt) => {
     evt.preventDefault()
 
     ipcRenderer.send('close')

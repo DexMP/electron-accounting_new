@@ -44,7 +44,8 @@ const todosData = new DataStore({ name: 'Todos Main' })
 function main() {
     // todo list window
     let mainWindow = new Window({
-        file: path.join('renderer', 'index.html')
+        file: path.join('renderer', 'index.html'),
+        frame: false,
     })
     mainWindow.maximize()
     mainWindow.show()
@@ -79,7 +80,6 @@ function main() {
                 file: path.join('renderer', 'add.html'),
                 width: 400,
                 height: 400,
-                // close with the main window
                 parent: mainWindow
             })
 
@@ -110,10 +110,14 @@ function main() {
         mainWindow.send('todos', updatedTodos)
     })
 
+    ipcMain.on('sing_out', (event) => {
+        authWindow
+    })
+
     ipcMain.on('close', () => {
-            app.quit()
-        })
-        // auth-todo from todo list window
+        app.quit()
+    })
+
     return ipcMain.on('username', (event, username) => {
         ipcMain.on('password', (event, password) => {
             connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
