@@ -17,6 +17,16 @@ const connection = mysql.createConnection({
     port: 3306
 });
 
+const getRanHex = size => {
+    let result = [];
+    let hexRef = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+
+    for (let n = 0; n < size; n++) {
+        result.push(hexRef[Math.floor(Math.random() * 16)]);
+    }
+    return result.join('');
+}
+
 connection.connect(err => {
     if (err) {
         console.log(err);
@@ -80,13 +90,19 @@ function main() {
 
     // add-todo from add todo window
     ipcMain.on('add-todo', (event, todo) => {
-        const updatedTodos = todosData.addTodo(todo).todos
-
-        connection.query(query_add + transaction + '", "' + username + '", ' + sum + ', ' + date + ')', function(err, results, fields) {
-            console.log(username + results);
+        ipcMain.on('username', (event, username) => {
+            const updatedTodos = todosData.addTodo(todo).todos
+            var transaction = getRanHex(16)
+            var date = new Date();
+            connection.query(query_add + transaction + '", "' + username + '", ' + Number(todo) + ', ' + date + ')', function(err, results, fields) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(results);
+                }
+            })
+            mainWindow.send('todos', updatedTodos)
         })
-
-        mainWindow.send('todos', updatedTodos)
     })
 
     // delete-todo from todo list window
@@ -101,11 +117,13 @@ function main() {
         ipcMain.on('password', (event, password) => {
             connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
                 if (results[0].total === 1) {
+                    if (username === 'root') {
 
-                    console.log(username + ' Sing In');
-                    mainWindow.send('username', username)
-                    authWindow.close()
-                    mainWindow.show()
+                    } else {
+                        mainWindow.send('username', username)
+                        authWindow.close()
+                        mainWindow.show()
+                    }
                 } else {}
             })
         })

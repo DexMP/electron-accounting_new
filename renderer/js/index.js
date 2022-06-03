@@ -1,11 +1,10 @@
 'use strict'
 
 const { ipcRenderer } = require('electron')
-const bootstrap = require('bootstrap')
 let now = new Date();
 
 ipcRenderer.on('username', (e, username) => {
-    alert(username + " Авторизован");
+    alert('Привет ' + username + ", приятной работы!");
 });
 
 // delete todo by its text value ( used below in event listener)

@@ -1,0 +1,28 @@
+html {
+    width: 100%;
+    margin: 5px;
+}
+
+body {
+    width: 100%;
+    margin: 0;
+}
+
+.container {
+    width: 100%;
+    text-align: center;
+}
+
+.row {
+    width: 100%;
+    text-align: center;
+    display: inline-block;
+}
+
+.text-center {
+    margin: 25px;
+}
+
+.user {
+    color: #7d7f7d;
+}
