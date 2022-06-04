@@ -85,6 +85,30 @@ body {
     border-color: #8673a1;
 }
 
+.border li:nth-child(11) {
+    border-color: #2f4f4f;
+}
+
+.border li:nth-child(12) {
+    border-color: #deaa88;
+}
+
+.border li:nth-child(13) {
+    border-color: #ebc7df;
+}
+
+.border li:nth-child(14) {
+    border-color: #926eae;
+}
+
+.border li:nth-child(15) {
+    border-color: #2a52be;
+}
+
+.border li:nth-child(16) {
+    border-color: #b76e79;
+}
+
 .border li:hover {
     border-left: 10px solid transparent;
 }
@@ -107,6 +131,50 @@ body {
 
 .border li:nth-child(5):hover {
     border-right: 10px solid #493224;
+}
+
+.border li:nth-child(6):hover {
+    border-right: 10px solid #909090;
+}
+
+.border li:nth-child(7):hover {
+    border-right: 10px solid #6c92af;
+}
+
+.border li:nth-child(8):hover {
+    border-right: 10px solid #442d25;
+}
+
+.border li:nth-child(9):hover {
+    border-right: 10px solid #ff8243;
+}
+
+.border li:nth-child(10):hover {
+    border-right: 10px solid #8673a1;
+}
+
+.border li:nth-child(11):hover {
+    border-right: 10px solid #2f4f4f;
+}
+
+.border li:nth-child(12):hover {
+    border-right: 10px solid #deaa88;
+}
+
+.border li:nth-child(13):hover {
+    border-right: 10px solid #ebc7df;
+}
+
+.border li:nth-child(14):hover {
+    border-right: 10px solid #926eae;
+}
+
+.border li:nth-child(15):hover {
+    border-right: 10px solid #2a52be;
+}
+
+.border li:nth-child(16):hover {
+    border-right: 10px solid #b76e79;
 }
 
 .btn {
