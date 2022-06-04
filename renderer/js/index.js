@@ -40,12 +40,6 @@ ipcRenderer.on('todos', (event, todos) => {
     })
 })
 
-document.getElementById('sing_out').addEventListener('click', (evt) => {
-    evt.preventDefault()
-
-    ipcRenderer.send('sing_out')
-})
-
 document.getElementById('exit').addEventListener('click', (evt) => {
     evt.preventDefault()
 

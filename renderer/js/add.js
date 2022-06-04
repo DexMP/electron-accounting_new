@@ -1,5 +1,4 @@
 'use strict'
-const bootstrap = require('bootstrap')
 const { ipcRenderer } = require('electron')
 
 document.getElementById('todoForm').addEventListener('submit', (evt) => {

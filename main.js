@@ -63,6 +63,7 @@ function main() {
 
     // add todo window
     let addTodoWin
+    let authWin
 
     // TODO: put these events into their own file
 
@@ -108,10 +109,6 @@ function main() {
         const updatedTodos = todosData.deleteTodo(todo).todos
 
         mainWindow.send('todos', updatedTodos)
-    })
-
-    ipcMain.on('sing_out', (event) => {
-        authWindow
     })
 
     ipcMain.on('close', () => {
