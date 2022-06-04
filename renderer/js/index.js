@@ -40,6 +40,10 @@ ipcRenderer.on('todos', (event, todos) => {
     })
 })
 
+document.getElementById('info').addEventListener('click', () => {
+    ipcRenderer.send('info')
+})
+
 document.getElementById('exit').addEventListener('click', (evt) => {
     evt.preventDefault()
 

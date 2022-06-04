@@ -7,8 +7,9 @@ const mysql = require('mysql')
 const Window = require('./Window')
 const DataStore = require('./DataStore')
 const query = require('esquery')
-let name
 
+let u_name
+let monney
 
 const connection = mysql.createConnection({
     host: 'sql11.freemysqlhosting.net',
@@ -94,7 +95,7 @@ function main() {
     ipcMain.on('cash', (event, cash) => {
         var transaction = getRanHex(16)
         const date = new Date().toJSON().slice(0, 10)
-        connection.query(`INSERT INTO cash_data( TRANSACTION, username, cash, DATE ) VALUES( "${transaction}", "${name}", ${cash}, "${date}" )`, function(err, results, fields) {
+        connection.query(`INSERT INTO cash_data( TRANSACTION, username, cash, DATE ) VALUES( "${transaction}", "${u_name}", ${cash}, "${date}" )`, function(err, results, fields) {
             if (err) {
                 console.log(err);
             } else {
@@ -109,6 +110,10 @@ function main() {
         const updatedTodos = todosData.deleteTodo(todo).todos
 
         mainWindow.send('todos', updatedTodos)
+    })
+
+    ipcMain.on('close', () => {
+        app.quit()
     })
 
     ipcMain.on('close', () => {
@@ -130,7 +135,7 @@ function main() {
                                 }
                             }
                         })
-                        name = username
+                        u_name = username
                         mainWindow.send('username', username)
                         authWindow.close()
                         mainWindow.show()
