@@ -9,9 +9,7 @@ ipcRenderer.on('username', (e, username) => {
         alert('Привет ' + username + ", приятной работы!");
     })
     // delete todo by its text value ( used below in event listener)
-const deleteTodo = (e) => {
-    ipcRenderer.send('delete-todo', e.target.textContent)
-}
+
 
 // create add todo window button
 document.getElementById('createTodoBtn').addEventListener('click', () => {
@@ -40,11 +38,7 @@ ipcRenderer.on('todos', (event, todos) => {
     })
 })
 
-document.getElementById('info').addEventListener('click', () => {
-    ipcRenderer.send('info')
-})
-
 document.getElementById('exit').addEventListener('click', (evt) => {
     evt.preventDefault()
-    ipcRenderer.send('exit')
+    ipcRenderer.send('close')
 })

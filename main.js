@@ -10,6 +10,7 @@ const query = require('esquery')
 
 let u_name
 let monney
+let newValue
 
 const connection = mysql.createConnection({
     host: 'sql4.freemysqlhosting.net',
@@ -73,6 +74,7 @@ function main() {
         mainWindow.webContents.send('todos', todosData.todos)
     })
 
+
     // create add todo window
     ipcMain.on('add-todo-window', () => {
         // if addTodoWin does not already exist
@@ -122,7 +124,7 @@ function main() {
                                 console.log(err);
                             } else {
                                 for (let index = 0; index in results; index++) {
-                                    const updatedTodos = todosData.deleteTodo(results[index].cash).todos
+                                    const updatedTodos = todosData.getTodos(results[index].cash).todos
                                     mainWindow.send('todos', updatedTodos)
                                 }
                             }
@@ -132,9 +134,7 @@ function main() {
                         authWindow.close()
                         mainWindow.show()
                     }
-                } else {
-                    console.log('hi');
-                }
+                } else {}
             })
         })
     })
@@ -142,14 +142,12 @@ function main() {
 
 app.on('ready', main)
 
-ipcMain.on('exit', () => {
-    app.quit()
-})
-
 ipcMain.on('close', () => {
+    todosData.delete()
     app.quit()
 })
 
 app.on('window-all-closed', function() {
+    todosData.delete()
     app.quit()
 })

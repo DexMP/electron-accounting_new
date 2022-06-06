@@ -88,6 +88,7 @@
     "dot-prop": "^4.2.0",
     "ecc-jsbn": "^0.1.2",
     "electron": "^3.0.4",
+    "electron-builder": "^23.0.3",
     "electron-download": "^4.1.1",
     "electron-reload": "^1.2.5",
     "electron-store": "^2.0.0",
@@ -388,5 +389,8 @@
     "start": "electron ."
   },
   "author": "DexMP",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.63"
+  }
 }

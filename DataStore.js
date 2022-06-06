@@ -2,7 +2,6 @@
 
 const Store = require('electron-store')
 
-
 // Локальное хранение
 class DataStore extends Store {
     constructor(settings) {
