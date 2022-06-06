@@ -32,7 +32,6 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL COMMENT 'Идентификатор',
   `username` varchar(28) NOT NULL,
   `password` varchar(28) NOT NULL,
-  `cash` int(64) NOT NULL,
   `date` date NOT NULL,
   `root` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -41,9 +40,9 @@ CREATE TABLE `users` (
 -- Дамп данных таблицы `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`, `cash`, `date`, `root`) VALUES
-(1, 'root', 'toor', 100, '0000-00-00', 1),
-(2, 'test', 'test', 1500044, '0000-00-00', 0);
+INSERT INTO `users` (`id`, `username`, `password`, `date`, `root`) VALUES
+(1, 'root', 'toor', '2022-06-04', 1),
+(2, 'test', 'test', '2022-06-04', 0);
 
 --
 -- Индексы сохранённых таблиц

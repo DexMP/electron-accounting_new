@@ -46,6 +46,5 @@ document.getElementById('info').addEventListener('click', () => {
 
 document.getElementById('exit').addEventListener('click', (evt) => {
     evt.preventDefault()
-
-    ipcRenderer.send('close')
+    ipcRenderer.send('exit')
 })

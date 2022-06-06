@@ -12,10 +12,10 @@ let u_name
 let monney
 
 const connection = mysql.createConnection({
-    host: 'sql11.freemysqlhosting.net',
-    user: 'sql11496402',
-    password: 'ZwM8Cz2kva',
-    database: 'sql11496402',
+    host: 'sql4.freemysqlhosting.net',
+    user: 'sql4498020',
+    password: 'kDeeHVFnbY',
+    database: 'sql4498020',
     port: 3306
 });
 
@@ -112,14 +112,6 @@ function main() {
         mainWindow.send('todos', updatedTodos)
     })
 
-    ipcMain.on('close', () => {
-        app.quit()
-    })
-
-    ipcMain.on('close', () => {
-        app.quit()
-    })
-
     return ipcMain.on('username', (event, username) => {
         ipcMain.on('password', (event, password) => {
             connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
@@ -130,7 +122,7 @@ function main() {
                                 console.log(err);
                             } else {
                                 for (let index = 0; index in results; index++) {
-                                    const updatedTodos = todosData.getTodos(results[index].cash).todos
+                                    const updatedTodos = todosData.deleteTodo(results[index].cash).todos
                                     mainWindow.send('todos', updatedTodos)
                                 }
                             }
@@ -150,6 +142,13 @@ function main() {
 
 app.on('ready', main)
 
+ipcMain.on('exit', () => {
+    app.quit()
+})
+
+ipcMain.on('close', () => {
+    app.quit()
+})
 
 app.on('window-all-closed', function() {
     app.quit()
