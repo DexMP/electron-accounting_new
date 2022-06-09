@@ -1,24 +1,15 @@
 'use strict'
 
 const path = require('path')
-const { app, ipcMain, session } = require('electron')
+const { app, ipcMain, Notification } = require('electron')
 const mysql = require('mysql')
 
 const Window = require('./Window')
 const DataStore = require('./DataStore')
 const query = require('esquery')
+const { id } = require('prelude-ls')
 
 let u_name
-let monney
-let newValue
-
-const connection = mysql.createConnection({
-    host: 'sql4.freemysqlhosting.net',
-    user: 'sql4498020',
-    password: 'kDeeHVFnbY',
-    database: 'sql4498020',
-    port: 3306
-});
 
 const getRanHex = size => {
     let result = [];
@@ -29,6 +20,14 @@ const getRanHex = size => {
     }
     return result.join('');
 }
+
+const connection = mysql.createConnection({
+    host: 'sql4.freemysqlhosting.net',
+    user: 'sql4498020',
+    password: 'kDeeHVFnbY',
+    database: 'sql4498020',
+    port: 3306
+});
 
 connection.connect(err => {
     if (err) {
@@ -42,44 +41,33 @@ require('electron-reload')(__dirname)
 
 // create a new todo store name "Todos Main"
 const todosData = new DataStore({ name: 'Todos Main' })
+const usersList = new DataStore({ name: 'Users Main' })
 
 function main() {
+    //windows
+    let addTodoWin
+    let adminWindow
+
     // todo list window
     let mainWindow = new Window({
         file: path.join('renderer', 'index.html'),
         frame: false,
+        hide: true
     })
-    mainWindow.maximize()
-    mainWindow.show()
+    mainWindow.blur()
 
     let authWindow = new Window({
         file: path.join('renderer', 'welcome.html'),
         width: 500,
         height: 500,
-        // close with the main window
         modal: true,
         show: false,
         frame: false,
         parent: mainWindow
     })
 
-    // add todo window
-    let addTodoWin
-    let authWin
-
-    // TODO: put these events into their own file
-
-    // initialize with todos
-    mainWindow.once('show', () => {
-        mainWindow.webContents.send('todos', todosData.todos)
-    })
-
-
-    // create add todo window
     ipcMain.on('add-todo-window', () => {
-        // if addTodoWin does not already exist
         if (!addTodoWin) {
-            // create a new add todo window
             addTodoWin = new Window({
                 file: path.join('renderer', 'add.html'),
                 width: 400,
@@ -87,57 +75,86 @@ function main() {
                 parent: mainWindow
             })
 
-            // cleanup
             addTodoWin.on('closed', () => {
                 addTodoWin = null
             })
         }
     })
 
+    // initialize with todos
+    mainWindow.once('show', () => {
+        mainWindow.webContents.send('todos', todosData.todos)
+    })
+
+    // Transfers
+    ipcMain.on('info', (event, id, transaction) => {
+        console.log(transaction);
+    })
+
     ipcMain.on('cash', (event, cash) => {
-        var transaction = getRanHex(16)
         const date = new Date().toJSON().slice(0, 10)
+        var transaction = getRanHex(16)
         connection.query(`INSERT INTO cash_data( TRANSACTION, username, cash, DATE ) VALUES( "${transaction}", "${u_name}", ${cash}, "${date}" )`, function(err, results, fields) {
             if (err) {
                 console.log(err);
             } else {
                 const updatedTodos = todosData.addTodo(cash).todos
                 mainWindow.send('todos', updatedTodos)
+                addTodoWin.close()
+                showNotification('X-отчёт', 'Данные успешно записаны')
             }
         })
     })
 
-    // delete-todo from todo list window
     ipcMain.on('delete-todo', (event, todo) => {
         const updatedTodos = todosData.deleteTodo(todo).todos
 
         mainWindow.send('todos', updatedTodos)
     })
 
-    return ipcMain.on('username', (event, username) => {
-        ipcMain.on('password', (event, password) => {
-            connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
-                if (results[0].total === 1) {
-                    if (username === 'root') {} else {
-                        connection.query(`SELECT * FROM cash_data`, function(err, results, fields) {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                for (let index = 0; index in results; index++) {
-                                    const updatedTodos = todosData.getTodos(results[index].cash).todos
-                                    mainWindow.send('todos', updatedTodos)
-                                }
+    return ipcMain.on('login', (event, username, password) => {
+        connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
+            if (results[0].total === 1) {
+                console.log(username, password);
+                if (username == 'root') {
+                    authWindow.close()
+                    mainWindow.hide()
+                    adminWindow = new Window({
+                        file: path.join('renderer', 'admin.html'),
+                        width: 800,
+                        height: 680,
+                        parent: mainWindow
+                    })
+
+                    adminWindow.on('closed', () => {
+                        adminWindow = null
+                    })
+                } else {
+                    connection.query(`SELECT * FROM cash_data`, function(err, results, fields) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            for (let index = 0; index in results; index++) {
+                                const updatedTodos = todosData.getTodos(results[index].cash).todos
+                                mainWindow.send('todos', updatedTodos)
                             }
-                        })
-                        u_name = username
-                        mainWindow.send('username', username)
-                        authWindow.close()
-                        mainWindow.show()
-                    }
-                } else {}
-            })
+                        }
+                    })
+                    u_name = username
+                    mainWindow.send('username', username)
+                    authWindow.close()
+                    mainWindow.show()
+                    mainWindow.maximize()
+                }
+            } else {
+                showNotification('Ошибка', 'Неверное имя пользователя или пароль')
+            }
         })
     })
+}
+
+function showNotification(notitfivation_title, notification_body) {
+    new Notification({ title: notitfivation_title, body: notification_body }).show()
 }
 
 app.on('ready', main)

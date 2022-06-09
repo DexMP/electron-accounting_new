@@ -8,8 +8,7 @@ document.getElementById('login-form').addEventListener('submit', (evt) => {
 
     let username = document.getElementById("username").value;
     let password = document.getElementById("password").value;
-    ipcRenderer.send('username', username)
-    ipcRenderer.send('password', password)
+    ipcRenderer.send('login', [username], [password])
     username.value = ''
     password.value = ''
 })

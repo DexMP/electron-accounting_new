@@ -1,7 +1,6 @@
 'use strict'
 
 const { ipcRenderer } = require('electron')
-let now = new Date();
 
 ipcRenderer.on('username', (e, username) => {
         const p_user = document.getElementById('user')
@@ -34,7 +33,10 @@ ipcRenderer.on('todos', (event, todos) => {
 
     // add click handlers to delete the clicked todo
     todoList.querySelectorAll('.todo-item').forEach(item => {
-        //item.addEventListener('click', deleteTodo)
+        item.addEventListener('click', (evt) => {
+            var todo_text = item.innerHTML
+            ipcRenderer.send('info', todo_text)
+        })
     })
 })
 
