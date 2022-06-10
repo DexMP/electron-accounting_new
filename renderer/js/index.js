@@ -1,46 +1,52 @@
 'use strict'
 
 const { ipcRenderer } = require('electron')
+const admin_panel = document.getElementById('admin_panel')
+const cash_data = document.getElementById('cash_data')
+
+//Buttons
+// on receive todos
+ipcRenderer.on('cash', (event, cash) => {
+    cash_data.style.display = 'block'
+    admin_panel.style.display = 'none'
+        // get the todoList ul
+    const todoList = document.getElementById('todoList')
+    todoList.innerHTML += `<li class="todo-item">${cash}</li>`
+})
 
 ipcRenderer.on('username', (e, username) => {
-        const p_user = document.getElementById('user')
-        p_user.innerHTML = `<p>Пользователь: ${username}</p>`;
-        alert('Привет ' + username + ", приятной работы!");
-    })
-    // delete todo by its text value ( used below in event listener)
+    const p_user = document.getElementById('user')
+    p_user.innerHTML = `<p>Пользователь: ${username}</p>`
+    alert('Привет ' + username + ", приятной работы!")
+})
 
-
-// create add todo window button
 document.getElementById('createTodoBtn').addEventListener('click', () => {
     ipcRenderer.send('add-todo-window')
 })
 
-//Buttons
-// on receive todos
-ipcRenderer.on('todos', (event, todos) => {
-    // get the todoList ul
-    const todoList = document.getElementById('todoList')
+// Admin panel
 
-    // create html string
-    const todoItems = todos.reduce((html, todo) => {
-        html += `<li class="todo-item">${todo}</li>`
+ipcRenderer.on('userdata', (e, userdata) => {
+    admin_panel.style.display = 'block'
+    cash_data.style.display = 'none'
+    const userList = document.getElementById('userList')
+    userList.innerHTML += `<li class="todo-item">${userdata}</li>`
 
-        return html
-    }, '')
-
-    // set list html to the todo items
-    todoList.innerHTML = todoItems
-
-    // add click handlers to delete the clicked todo
-    todoList.querySelectorAll('.todo-item').forEach(item => {
-        item.addEventListener('click', (evt) => {
-            var todo_text = item.innerHTML
-            ipcRenderer.send('info', todo_text)
-        })
-    })
 })
 
+document.getElementById('createUsersBtn').addEventListener('click', (evt) => {
+    evt.preventDefault()
+    ipcRenderer.send
+})
+
+// exit buttons
+
 document.getElementById('exit').addEventListener('click', (evt) => {
+    evt.preventDefault()
+    ipcRenderer.send('close')
+})
+
+document.getElementById('close').addEventListener('click', (evt) => {
     evt.preventDefault()
     ipcRenderer.send('close')
 })

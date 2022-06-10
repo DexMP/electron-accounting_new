@@ -11,32 +11,59 @@
 </head>
 
 <body>
-    <p class="user" id="user">Пользователь: </p>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm">
-                <h1 class="text-center">Меню</h1>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm">
-                <button id="createTodoBtn" type="button" class="btn">X-отчёт</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm">
-                <button id="exit" type="button" class="btn" role="button">Завершение работы</button>
-            </div>
-        </div>
-        <div class="list">
+    <div id="cash_data">
+        <p class="user" id="user">Пользователь: </p>
+        <div class="container">
             <div class="row">
-                <div class="col">
-                    <ul class="border" id="todoList"></ul>
+                <div class="col-sm">
+                    <h1 class="text-center">Меню</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <button id="createTodoBtn" type="button" class="btn">X-отчёт</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <button id="exit" type="button" class="btn_exit" role="button">Завершение работы</button>
+                </div>
+            </div>
+            <div class="list">
+                <div class="row">
+                    <div class="col">
+                        <ul class="border" id="todoList"></ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
+    <div id="admin_panel">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm">
+                    <h1 class="text-center">Панель Администратора</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <button id="createUsersBtn" type="button" class="btn">Добавить пользователя</button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm">
+                    <button id="close" type="button" class="btn_exit" role="button">Завершение работы</button>
+                </div>
+            </div>
+            <div class="list">
+                <div class="row">
+                    <div class="col">
+                        <ul class="border" id="userList"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="./js/index.js"></script>
 </body>
 

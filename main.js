@@ -41,7 +41,6 @@ require('electron-reload')(__dirname)
 
 // create a new todo store name "Todos Main"
 const todosData = new DataStore({ name: 'Todos Main' })
-const usersList = new DataStore({ name: 'Users Main' })
 
 function main() {
     //windows
@@ -98,8 +97,7 @@ function main() {
             if (err) {
                 console.log(err);
             } else {
-                const updatedTodos = todosData.addTodo(cash).todos
-                mainWindow.send('todos', updatedTodos)
+                mainWindow.send('cash', cash)
                 addTodoWin.close()
                 showNotification('X-отчёт', 'Данные успешно записаны')
             }
@@ -115,28 +113,29 @@ function main() {
     return ipcMain.on('login', (event, username, password) => {
         connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
             if (results[0].total === 1) {
-                console.log(username, password);
                 if (username == 'root') {
+                    connection.query(`SELECT * FROM users`, function(err, results, fields) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            for (let index = 0; index in results; index++) {
+                                console.log(results[index].username);
+                                var userdata = results[index].username
+                                mainWindow.send('userdata', userdata)
+                            }
+                        }
+                    })
                     authWindow.close()
-                    mainWindow.hide()
-                    adminWindow = new Window({
-                        file: path.join('renderer', 'admin.html'),
-                        width: 800,
-                        height: 680,
-                        parent: mainWindow
-                    })
-
-                    adminWindow.on('closed', () => {
-                        adminWindow = null
-                    })
+                    mainWindow.show()
+                    mainWindow.maximize()
                 } else {
                     connection.query(`SELECT * FROM cash_data`, function(err, results, fields) {
                         if (err) {
                             console.log(err);
                         } else {
                             for (let index = 0; index in results; index++) {
-                                const updatedTodos = todosData.getTodos(results[index].cash).todos
-                                mainWindow.send('todos', updatedTodos)
+                                const updatedTodos = results[index].cash
+                                mainWindow.send('cash', updatedTodos)
                             }
                         }
                     })
