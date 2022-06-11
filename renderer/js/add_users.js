@@ -7,8 +7,10 @@ document.getElementById('newUserForm').addEventListener('submit', (evt) => {
     let username = document.getElementById('username').value
     let fullname = document.getElementById('fullname').value
     let password = document.getElementById('password').value
-    ipcRenderer.send('newUser', [username], [fullname], [password])
+    let root = document.getElementById('root').value
+    ipcRenderer.send('newUser', [username], [fullname], [password], [root])
     username.value = ''
     fullname.value = ''
     password.value = ''
+    root.value = ''
 })

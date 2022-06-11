@@ -1,6 +1,7 @@
 'use strict'
 
 const { ipcRenderer } = require('electron')
+const { indexOf, lastIndexOf } = require('lodash')
 const admin_panel = document.getElementById('admin_panel')
 const cash_data = document.getElementById('cash_data')
 
@@ -32,11 +33,11 @@ ipcRenderer.on('userdata', (e, userdata, fullname) => {
     const userList = document.getElementById('userList')
     userList.innerHTML += `<li class="todo-item">Логин: ${userdata}<br>Имя: ${fullname}</li>`
 
-    userList.querySelectorAll('.todo-item').forEach(item => {
+    userList.querySelectorAll('.todo-item').forEach((item, index, parametr) => {
         item.addEventListener('click', (evt) => {
             evt.preventDefault()
-            var id = userList.id
-            ipcRenderer.send('delete', id)
+            item.remove()
+            ipcRenderer.send('delete', index)
         })
     })
 

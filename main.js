@@ -84,8 +84,8 @@ function main() {
         if (!addUserWin) {
             addUserWin = new Window({
                 file: path.join('renderer', 'add_users.html'),
-                width: 500,
-                height: 500,
+                width: 480,
+                height: 600,
                 parent: mainWindow
             })
 
@@ -95,8 +95,7 @@ function main() {
         }
     })
 
-    ipcMain.on('newUser', (event, username, fullname, password) => {
-        const root = false
+    ipcMain.on('newUser', (event, username, fullname, password, root) => {
         var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
         connection.query(`INSERT INTO users(username, full_name, password, root, created_at, deleted_at) VALUES ("${username}", "${fullname}", "${password}", ${root}, "${date}", NULL)`,
             function(err, results, fields) {
@@ -112,7 +111,11 @@ function main() {
 
     // Transfers
     ipcMain.on('delete', (event, id) => {
-        console.log(id);
+        connection.query(`DELETE FROM users WHERE Id=${id}`, function(err, results, fields) {
+            if (err) {
+                console.log(err);
+            } else { showNotification('Панель администратора', 'Пользователь удалён') }
+        })
     })
 
     ipcMain.on('cash', (event, cash) => {
@@ -173,11 +176,11 @@ function main() {
                                     mainWindow.maximize()
                                 }
                             } else {
-                                //showNotification('Ошибка', 'Пароль не верный')
+                                // showNotification('Ошибка', 'Пароль не верный')
                             }
                         }
                     } else {
-                        //showNotification('Ошибка', 'Пользователя не существует')
+                        // showNotification('Ошибка', 'Пользователя не существует')
                     }
 
                 }
