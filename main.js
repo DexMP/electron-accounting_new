@@ -23,9 +23,9 @@ const getRanHex = size => {
 
 const connection = mysql.createConnection({
     host: 'sql4.freemysqlhosting.net',
-    user: 'sql4498020',
-    password: 'kDeeHVFnbY',
-    database: 'sql4498020',
+    user: 'sql4499006',
+    password: 'NjgU8dtxhc',
+    database: 'sql4499006',
     port: 3306
 });
 
@@ -45,7 +45,7 @@ const todosData = new DataStore({ name: 'Todos Main' })
 function main() {
     //windows
     let addTodoWin
-    let adminWindow
+    let addUserWin
 
     // todo list window
     let mainWindow = new Window({
@@ -80,20 +80,45 @@ function main() {
         }
     })
 
-    // initialize with todos
-    mainWindow.once('show', () => {
-        mainWindow.webContents.send('todos', todosData.todos)
+    ipcMain.on('add-user', () => {
+        if (!addUserWin) {
+            addUserWin = new Window({
+                file: path.join('renderer', 'add_users.html'),
+                width: 500,
+                height: 500,
+                parent: mainWindow
+            })
+
+            addUserWin.on('closed', () => {
+                addUserWin = null
+            })
+        }
+    })
+
+    ipcMain.on('newUser', (event, username, fullname, password) => {
+        const root = false
+        var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        connection.query(`INSERT INTO users(username, full_name, password, root, created_at, deleted_at) VALUES ("${username}", "${fullname}", "${password}", ${root}, "${date}", NULL)`,
+            function(err, results, fields) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    mainWindow.send('userdata', [username], [fullname], [root])
+                    addUserWin.close()
+                    showNotification('Панель администратора', 'Пользователь успешно добавлен')
+                }
+            })
     })
 
     // Transfers
-    ipcMain.on('info', (event, id, transaction) => {
-        console.log(transaction);
+    ipcMain.on('delete', (event, id) => {
+        console.log(id);
     })
 
     ipcMain.on('cash', (event, cash) => {
-        const date = new Date().toJSON().slice(0, 10)
+        var date = new Date().toISOString().slice(0, 19).replace('T', ' ');
         var transaction = getRanHex(16)
-        connection.query(`INSERT INTO cash_data( TRANSACTION, username, cash, DATE ) VALUES( "${transaction}", "${u_name}", ${cash}, "${date}" )`, function(err, results, fields) {
+        connection.query(`INSERT INTO cash_data( TRANSACTION, username, cash, DATE ) VALUES("${transaction}", "${u_name}", ${cash}, "${date}" )`, function(err, results, fields) {
             if (err) {
                 console.log(err);
             } else {
@@ -104,49 +129,58 @@ function main() {
         })
     })
 
-    ipcMain.on('delete-todo', (event, todo) => {
-        const updatedTodos = todosData.deleteTodo(todo).todos
-
-        mainWindow.send('todos', updatedTodos)
-    })
-
     return ipcMain.on('login', (event, username, password) => {
-        connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
-            if (results[0].total === 1) {
-                if (username == 'root') {
-                    connection.query(`SELECT * FROM users`, function(err, results, fields) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            for (let index = 0; index in results; index++) {
-                                console.log(results[index].username);
-                                var userdata = results[index].username
-                                mainWindow.send('userdata', userdata)
-                            }
-                        }
-                    })
-                    authWindow.close()
-                    mainWindow.show()
-                    mainWindow.maximize()
-                } else {
-                    connection.query(`SELECT * FROM cash_data`, function(err, results, fields) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            for (let index = 0; index in results; index++) {
-                                const updatedTodos = results[index].cash
-                                mainWindow.send('cash', updatedTodos)
-                            }
-                        }
-                    })
-                    u_name = username
-                    mainWindow.send('username', username)
-                    authWindow.close()
-                    mainWindow.show()
-                    mainWindow.maximize()
-                }
+        //connection.query('SELECT COUNT(1) AS total FROM users WHERE username = "' + username + '" AND password = "' + password + '"', function(err, results, fields) {
+        connection.query(`SELECT * FROM users`, function(err, results, fields) {
+            if (err) {
+                console.log(err);
             } else {
-                showNotification('Ошибка', 'Неверное имя пользователя или пароль')
+                for (let index = 0; index in results; index++) {
+                    if (results[index].username == username) {
+                        for (let j = 0; j < results.length; j++) {
+                            if (results[j].password == password) {
+                                if (results[j].root) {
+                                    connection.query(`SELECT * FROM users`, function(err, results, fields) {
+                                        if (err) {
+                                            console.log(err);
+                                        } else {
+                                            for (let index = 0; index in results; index++) {
+                                                var userdata = results[index].username
+                                                var fullname = results[index].full_name
+                                                var root = results[index].root
+                                                mainWindow.send('userdata', [userdata], [fullname], [root])
+                                            }
+                                        }
+                                    })
+                                    authWindow.close()
+                                    mainWindow.show()
+                                    mainWindow.maximize()
+                                } else {
+                                    connection.query(`SELECT * FROM cash_data`, function(err, results, fields) {
+                                        if (err) {
+                                            console.log(err);
+                                        } else {
+                                            for (let index = 0; index in results; index++) {
+                                                const updatedTodos = results[index].cash
+                                                mainWindow.send('cash', updatedTodos)
+                                            }
+                                        }
+                                    })
+                                    u_name = username
+                                    mainWindow.send('username', username)
+                                    authWindow.close()
+                                    mainWindow.show()
+                                    mainWindow.maximize()
+                                }
+                            } else {
+                                //showNotification('Ошибка', 'Пароль не верный')
+                            }
+                        }
+                    } else {
+                        //showNotification('Ошибка', 'Пользователя не существует')
+                    }
+
+                }
             }
         })
     })

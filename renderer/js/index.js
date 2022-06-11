@@ -26,17 +26,25 @@ document.getElementById('createTodoBtn').addEventListener('click', () => {
 
 // Admin panel
 
-ipcRenderer.on('userdata', (e, userdata) => {
+ipcRenderer.on('userdata', (e, userdata, fullname) => {
     admin_panel.style.display = 'block'
     cash_data.style.display = 'none'
     const userList = document.getElementById('userList')
-    userList.innerHTML += `<li class="todo-item">${userdata}</li>`
+    userList.innerHTML += `<li class="todo-item">Логин: ${userdata}<br>Имя: ${fullname}</li>`
+
+    userList.querySelectorAll('.todo-item').forEach(item => {
+        item.addEventListener('click', (evt) => {
+            evt.preventDefault()
+            var id = userList.id
+            ipcRenderer.send('delete', id)
+        })
+    })
 
 })
 
 document.getElementById('createUsersBtn').addEventListener('click', (evt) => {
     evt.preventDefault()
-    ipcRenderer.send
+    ipcRenderer.send('add-user')
 })
 
 // exit buttons
